@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการคำสั่งซื้อ - หน้าหลัก</title>
+    <link rel="stylesheet" href="legacy-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="header-title">ระบบจัดการคำสั่งซื้อ</h1>
+                <nav class="nav">
+                    <a href="legacy-index.html" class="nav-link active">หน้าหลัก</a>
+                    <a href="legacy-submit-order.html" class="nav-link">สร้างคำสั่งซื้อ</a>
+                    <a href="legacy-fish-orders.html" class="nav-link">แผนกปลา</a>
+                    <a href="legacy-pork-orders.html" class="nav-link">แผนกหมู</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2 class="page-title">หน้าหลัก</h2>
+                <p class="page-description">ภาพรวมคำสั่งซื้อทั้งหมดจากทุกแผนก</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">คำสั่งซื้อทั้งหมด</div>
+                    <div class="stat-value" id="totalOrders">6</div>
+                    <div class="stat-change">+2 จากเมื่อวาน</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">คำสั่งซื้อใหม่</div>
+                    <div class="stat-value stat-value-blue" id="newOrders">2</div>
+                    <div class="stat-change">รอดำเนินการ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">กำลังดำเนินการ</div>
+                    <div class="stat-value stat-value-yellow" id="inProcessOrders">2</div>
+                    <div class="stat-change">กำลังเตรียม</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">เสร็จสิ้น</div>
+                    <div class="stat-value stat-value-green" id="completedOrders">2</div>
+                    <div class="stat-change">พร้อมรับ</div>
+                </div>
+            </div>
+
+            <!-- Filters and Actions -->
+            <div class="filter-card">
+                <div class="filter-content">
+                    <div class="filter-row">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาคำสั่งซื้อ...">
+                        </div>
+                        <select id="departmentFilter" class="filter-select">
+                            <option value="all">ทุกแผนก</option>
+                            <option value="fish">แผนกปลา</option>
+                            <option value="pork">แผนกหมู</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="all">ทุกสถานะ</option>
+                            <option value="new">ใหม่</option>
+                            <option value="in process">กำลังดำเนินการ</option>
+                            <option value="completed">เสร็จสิ้น</option>
+                        </select>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-outline" onclick="exportData()">
+                            <i class="fas fa-download"></i> ส่งออก
+                        </button>
+                        <a href="legacy-submit-order.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> คำสั่งซื้อใหม่
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="table-title">คำสั่งซื้อล่าสุด</h3>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>รหัสคำสั่งซื้อ</th>
+                                <th>ลูกค้า</th>
+                                <th>แผนก</th>
+                                <th>รายการสินค้า</th>
+                                <th>สถานะ</th>
+                                <th>วันที่รับ</th>
+                                <th>เวลารับ</th>
+                                <th>ผู้ส่ง</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td class="font-medium text-blue">ORD-001</td>
+                                <td>Restaurant ABC</td>
+                                <td><span class="badge badge-fish">แผนกปลา</span></td>
+                                <td class="truncate" title="Salmon 10kg, Tuna 5kg">Salmon 10kg, Tuna 5kg</td>
+                                <td><span class="badge badge-new"><i class="fas fa-exclamation-circle"></i> ใหม่</span></td>
+                                <td>15/01/2024</td>
+                                <td>10:00</td>
+                                <td class="text-gray-600">John Doe</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium text-blue">ORD-002</td>
+                                <td>Hotel XYZ</td>
+                                <td><span class="badge badge-pork">แผนกหมู</span></td>
+                                <td class="truncate" title="Pork Belly 15kg, Ribs 8kg">Pork Belly 15kg, Ribs 8kg</td>
+                                <td><span class="badge badge-process"><i class="fas fa-clock"></i> กำลังดำเนินการ</span></td>
+                                <td>16/01/2024</td>
+                                <td>14:00</td>
+                                <td class="text-gray-600">Jane Smith</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium text-blue">ORD-003</td>
+                                <td>Catering Co</td>
+                                <td><span class="badge badge-fish">แผนกปลา</span></td>
+                                <td class="truncate" title="Cod 12kg, Shrimp 3kg">Cod 12kg, Shrimp 3kg</td>
+                                <td><span class="badge badge-completed"><i class="fas fa-check-circle"></i> เสร็จสิ้น</span></td>
+                                <td>14/01/2024</td>
+                                <td>08:00</td>
+                                <td class="text-gray-600">Mike Johnson</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>กำลังโหลด...</p>
+        </div>
+    </div>
+
+    <!-- Scripts for Chrome 70 / Android 6.0.1 compatibility -->
+    <script src="legacy-polyfills.js"></script>
+    <script src="legacy-data.js"></script>
+    <script src="legacy-utils.js"></script>
+    <script src="legacy-dashboard.js"></script>
+</body>
+</html>

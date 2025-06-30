@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างคำสั่งซื้อใหม่ - ระบบจัดการคำสั่งซื้อ (Real System)</title>
+    <link rel="stylesheet" href="legacy-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="header-title">ระบบจัดการคำสั่งซื้อ (Real System)</h1>
+                <nav class="nav">
+                    <a href="legacy-real-index.html" class="nav-link">หน้าหลัก</a>
+                    <a href="legacy-real-submit-order.html" class="nav-link active">สร้างคำสั่งซื้อ</a>
+                    <a href="legacy-real-fish-orders.html" class="nav-link">แผนกปลา</a>
+                    <a href="legacy-real-pork-orders.html" class="nav-link">แผนกหมู</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container" style="max-width: 800px;">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div style="margin-bottom: 16px;">
+                    <a href="legacy-real-index.html" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+                    </a>
+                </div>
+                <h2 class="page-title">สร้างคำสั่งซื้อใหม่</h2>
+                <p class="page-description">สร้างคำขอสินค้าใหม่สำหรับแผนกปลาหรือแผนกหมู (ส่งไปยัง API จริง)</p>
+                <div style="background: #e8f5e8; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                    <p style="margin: 0; font-size: 14px; color: #2e7d32;">
+                        <i class="fas fa-check-circle"></i> 
+                        คำสั่งซื้อจะถูกส่งไปยังแผนกที่เลือกแบบ Real-time | Auto-save draft ทุก 30 วินาที
+                    </p>
+                </div>
+            </div>
+
+            <!-- Order Form -->
+            <div class="filter-card">
+                <div class="filter-content" style="border: none;">
+                    <h3 style="margin-bottom: 24px; font-size: 18px; font-weight: 600;">รายละเอียดคำสั่งซื้อ</h3>
+                    
+                    <form id="orderForm">
+                        <!-- Customer Information -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 24px;">
+                            <div style="flex: 1; min-width: 250px;">
+                                <label for="customer" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                    ชื่อลูกค้า *
+                                </label>
+                                <input type="text" id="customer" name="customer" class="search-input" 
+                                       placeholder="ระบุชื่อลูกค้า" required>
+                            </div>
+                            <div style="flex: 1; min-width: 250px;">
+                                <label for="department" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                    แผนกปลายทาง *
+                                </label>
+                                <select id="department" name="department" class="filter-select" required>
+                                    <option value="">เลือกแผนก</option>
+                                    <option value="Fish">แผนกปลา</option>
+                                    <option value="Pork">แผนกหมู</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div style="margin-bottom: 24px;">
+                            <label for="items" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                รายการสินค้า *
+                            </label>
+                            <textarea id="items" name="items" class="search-input" rows="4" 
+                                      placeholder="ระบุรายการสินค้าและปริมาณ (เช่น ปลาแซลมอน 10 กก., ปลาทูน่า 5 กก.)" 
+                                      required style="height: 100px; resize: vertical;"></textarea>
+                        </div>
+
+                        <!-- Pickup Information -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 24px;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="pickupDate" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                    วันที่รับสินค้า *
+                                </label>
+                                <input type="date" id="pickupDate" name="pickupDate" class="search-input" required>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="pickupTime" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                    เวลารับสินค้า *
+                                </label>
+                                <input type="time" id="pickupTime" name="pickupTime" class="search-input" required>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="priority" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                    ระดับความสำคัญ
+                                </label>
+                                <select id="priority" name="priority" class="filter-select">
+                                    <option value="low">ต่ำ</option>
+                                    <option value="normal" selected>ปกติ</option>
+                                    <option value="high">สูง</option>
+                                    <option value="urgent">เร่งด่วน</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div style="margin-bottom: 24px;">
+                            <label for="notes" style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">
+                                หมายเหตุเพิ่มเติม
+                            </label>
+                            <textarea id="notes" name="notes" class="search-input" rows="3" 
+                                      placeholder="คำแนะนำพิเศษหรือข้อกำหนดเพิ่มเติม"
+                                      style="height: 80px; resize: vertical;"></textarea>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> ส่งคำสั่งซื้อ
+                            </button>
+                            <a href="legacy-real-index.html" class="btn btn-outline">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Guidelines -->
+            <div class="filter-card">
+                <div class="filter-content" style="border: none;">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">คำแนะนำการกรอกข้อมูล</h3>
+                    <ul style="list-style: none; color: #6b7280; font-size: 14px; margin: 0; padding: 0;">
+                        <li style="margin-bottom: 8px;">• ช่องที่มีเครื่องหมาย (*) จำเป็นต้องกรอก</li>
+                        <li style="margin-bottom: 8px;">• กรุณาระบุปริมาณและประเภทสินค้าให้ชัดเจน</li>
+                        <li style="margin-bottom: 8px;">• วันที่รับสินค้าควรล่วงหน้าอย่างน้อย 24 ชั่วโมง</li>
+                        <li style="margin-bottom: 8px;">• สำหรับคำสั่งซื้อเร่งด่วน กรุณาติดต่อแผนกโดยตรง</li>
+                        <li style="margin-bottom: 8px;">• เวลาทำการ: 8:00 - 18:00 น.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="legacy-polyfills.js"></script>
+    <script src="legacy-utils.js"></script>
+    <script src="legacy-api-client.js"></script>
+    <script src="legacy-real-submit-order.js"></script>
+</body>
+</html>

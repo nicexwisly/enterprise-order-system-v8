@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างคำสั่งซื้อใหม่ - ระบบจัดการคำสั่งซื้อองค์กร V8</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .nav {
+            margin-top: 15px;
+        }
+        
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #229954, #1e8449);
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 สร้างคำสั่งซื้อใหม่</h1>
+            <p>กรอกข้อมูลคำสั่งซื้อเพื่อส่งไปยังแผนกที่เกี่ยวข้อง</p>
+            <div class="nav">
+                <a href="index.html">🏠 หน้าหลัก</a>
+                <a href="fish-orders.html">🐟 แผนกปลา</a>
+                <a href="pork-orders.html">🐷 แผนกหมู</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div id="alert-container"></div>
+            
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="customerName">ชื่อลูกค้า *</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="department">แผนก *</label>
+                        <select id="department" name="department" required>
+                            <option value="">เลือกแผนก</option>
+                            <option value="fish">🐟 แผนกปลา</option>
+                            <option value="pork">🐷 แผนกหมู</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product">สินค้า *</label>
+                        <input type="text" id="product" name="product" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantity">จำนวน *</label>
+                        <input type="number" id="quantity" name="quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unit">หน่วย</label>
+                        <select id="unit" name="unit">
+                            <option value="กิโลกรัม">กิโลกรัม</option>
+                            <option value="ตัว">ตัว</option>
+                            <option value="กล่อง">กล่อง</option>
+                            <option value="ชิ้น">ชิ้น</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">หมายเหตุ</label>
+                    <textarea id="notes" name="notes" placeholder="ระบุข้อมูลเพิ่มเติม เช่น คุณภาพ เวลาส่ง ฯลฯ"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    📤 ส่งคำสั่งซื้อ
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <p>กำลังส่งคำสั่งซื้อ...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="api-client.js"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            var form = document.getElementById('order-form');
+            var submitBtn = document.getElementById('submit-btn');
+            var alertContainer = document.getElementById('alert-container');
+            var loading = document.getElementById('loading');
+
+            function showAlert(message, type) {
+                var alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+                alertContainer.innerHTML = '<div class="alert ' + alertClass + '">' + message + '</div>';
+                
+                // Auto hide success messages
+                if (type === 'success') {
+                    setTimeout(function() {
+                        alertContainer.innerHTML = '';
+                    }, 5000);
+                }
+            }
+
+            function validateForm(formData) {
+                var errors = [];
+
+                if (!formData.customerName.trim()) {
+                    errors.push('กรุณาระบุชื่อลูกค้า');
+                }
+
+                if (!formData.department) {
+                    errors.push('กรุณาเลือกแผนก');
+                }
+
+                if (!formData.product.trim()) {
+                    errors.push('กรุณาระบุสินค้า');
+                }
+
+                if (!formData.quantity || formData.quantity < 1) {
+                    errors.push('กรุณาระบุจำนวนที่ถูกต้อง');
+                }
+
+                return errors;
+            }
+
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '⏳ กำลังส่ง...';
+                    loading.style.display = 'block';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📤 ส่งคำสั่งซื้อ';
+                    loading.style.display = 'none';
+                }
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                var formData = {
+                    customerName: document.getElementById('customerName').value,
+                    department: document.getElementById('department').value,
+                    product: document.getElementById('product').value,
+                    quantity: parseInt(document.getElementById('quantity').value),
+                    unit: document.getElementById('unit').value,
+                    notes: document.getElementById('notes').value
+                };
+
+                // Validate form
+                var errors = validateForm(formData);
+                if (errors.length > 0) {
+                    showAlert('กรุณาแก้ไขข้อผิดพลาด:<br>• ' + errors.join('<br>• '), 'error');
+                    return;
+                }
+
+                // Clear previous alerts
+                alertContainer.innerHTML = '';
+                setLoading(true);
+
+                // Submit order
+                API.createOrder(formData, function(error, response) {
+                    setLoading(false);
+
+                    if (error) {
+                        showAlert('เกิดข้อผิดพลาดในการส่งคำสั่งซื้อ: ' + error.message, 'error');
+                        return;
+                    }
+
+                    // Success
+                    showAlert(
+                        '✅ ส่งคำสั่งซื้อเรียบร้อยแล้ว!<br>' +
+                        'รหัสคำสั่งซื้อ: <strong>' + response.id + '</strong><br>' +
+                        'ส่งไปยัง: <strong>' + (response.department === 'fish' ? 'แผนกปลา' : 'แผนกหมู') + '</strong>',
+                        'success'
+                    );
+
+                    // Reset form
+                    form.reset();
+
+                    // Redirect after 3 seconds
+                    setTimeout(function() {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                });
+            });
+
+        })();
+    </script>
+</body>
+</html>

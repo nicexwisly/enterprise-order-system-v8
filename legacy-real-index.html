@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการคำสั่งซื้อองค์กร V8 - Dashboard</title>
+    <link rel="stylesheet" href="legacy-styles.css">
+    <style>
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .status-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .status-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .action-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+        .action-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .action-btn.secondary {
+            background: #2196F3;
+        }
+        .action-btn.secondary:hover {
+            background: #1976D2;
+        }
+        .recent-orders {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .order-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-info {
+            flex: 1;
+        }
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-processing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-shipping {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-completed {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .system-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .system-info h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🏢 ระบบจัดการคำสั่งซื้อองค์กร V8</h1>
+            <p>Dashboard สำหรับ Chrome 70+ และ Android 6.0.1+</p>
+        </header>
+
+        <div class="system-info">
+            <h3>🚀 ระบบพร้อมใช้งานบน Render</h3>
+            <p><strong>เวอร์ชัน:</strong> V8.0.0 - Production Ready</p>
+            <p><strong>รองรับ:</strong> Chrome 70+, Android 6.0.1+, Pure JavaScript</p>
+            <p><strong>สถานะ:</strong> <span id="system-status">กำลังตรวจสอบ...</span></p>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="status-card">
+                <div class="status-number" id="total-orders">-</div>
+                <div class="status-label">คำสั่งซื้อทั้งหมด</div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="status-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                    <div class="status-number" id="fish-orders">-</div>
+                    <div class="status-label">แผนกปลา</div>
+                </div>
+                <div class="status-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <div class="status-number" id="pork-orders">-</div>
+                    <div class="status-label">แผนกหมู</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a href="legacy-real-submit-order.html" class="action-btn">
+                📝 สร้างคำสั่งซื้อใหม่
+            </a>
+            <a href="legacy-real-fish-orders.html" class="action-btn secondary">
+                🐟 จัดการคำสั่งซื้อปลา
+            </a>
+            <a href="legacy-real-pork-orders.html" class="action-btn secondary">
+                🐷 จัดการคำสั่งซื้อหมู
+            </a>
+        </div>
+
+        <div class="recent-orders">
+            <h2>📋 คำสั่งซื้อล่าสุด</h2>
+            <div id="recent-orders-list">
+                <div class="loading">กำลังโหลดข้อมูล...</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 ระบบจัดการคำสั่งซื้อองค์กร V8 | Powered by Pure JavaScript</p>
+            <p>🌐 รองรับ Chrome 70+ และ Android 6.0.1+ | 🚀 Deploy บน Render</p>
+        </footer>
+    </div>
+
+    <script src="legacy-polyfills.js"></script>
+    <script src="legacy-api-client.js"></script>
+    <script>
+        // Dashboard functionality
+        (function() {
+            'use strict';
+
+            var dashboard = {
+                init: function() {
+                    this.checkSystemHealth();
+                    this.loadDashboardData();
+                    this.setupAutoRefresh();
+                },
+
+                checkSystemHealth: function() {
+                    var statusElement = document.getElementById('system-status');
+                    
+                    LegacyAPI.healthCheck(function(error, data) {
+                        if (error) {
+                            statusElement.textContent = '❌ ระบบขัดข้อง';
+                            statusElement.style.color = '#dc3545';
+                        } else {
+                            statusElement.textContent = '✅ ระบบทำงานปกติ';
+                            statusElement.style.color = '#28a745';
+                        }
+                    });
+                },
+
+                loadDashboardData: function() {
+                    var self = this;
+                    
+                    // Load all orders
+                    LegacyAPI.getOrders(null, function(error, orders) {
+                        if (error) {
+                            self.showError('ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้');
+                            return;
+                        }
+
+                        self.updateStats(orders);
+                        self.displayRecentOrders(orders);
+                    });
+                },
+
+                updateStats: function(orders) {
+                    var totalOrders = orders.length;
+                    var fishOrders = orders.filter(function(order) {
+                        return order.department === 'fish';
+                    }).length;
+                    var porkOrders = orders.filter(function(order) {
+                        return order.department === 'pork';
+                    }).length;
+
+                    document.getElementById('total-orders').textContent = totalOrders;
+                    document.getElementById('fish-orders').textContent = fishOrders;
+                    document.getElementById('pork-orders').textContent = porkOrders;
+                },
+
+                displayRecentOrders: function(orders) {
+                    var container = document.getElementById('recent-orders-list');
+                    
+                    if (orders.length === 0) {
+                        container.innerHTML = '<p>ยังไม่มีคำสั่งซื้อ</p>';
+                        return;
+                    }
+
+                    // Sort by ID (newest first) and take first 5
+                    var recentOrders = orders.sort(function(a, b) {
+                        return b.id - a.id;
+                    }).slice(0, 5);
+
+                    var html = '';
+                    recentOrders.forEach(function(order) {
+                        var statusClass = 'status-pending';
+                        if (order.status === 'กำลังดำเนินการ') statusClass = 'status-processing';
+                        if (order.status === 'กำลังจัดส่ง') statusClass = 'status-shipping';
+                        if (order.status === 'เสร็จสิ้น') statusClass = 'status-completed';
+
+                        html += '<div class="order-item">';
+                        html += '<div class="order-info">';
+                        html += '<strong>' + order.customerName + '</strong><br>';
+                        html += order.product + ' (' + order.quantity + ' ' + order.unit + ')';
+                        html += '</div>';
+                        html += '<span class="order-status ' + statusClass + '">' + order.status + '</span>';
+                        html += '</div>';
+                    });
+
+                    container.innerHTML = html;
+                },
+
+                showError: function(message) {
+                    var container = document.getElementById('recent-orders-list');
+                    container.innerHTML = '<div class="error">' + message + '</div>';
+                },
+
+                setupAutoRefresh: function() {
+                    var self = this;
+                    // Refresh every 30 seconds
+                    setInterval(function() {
+                        self.loadDashboardData();
+                        self.checkSystemHealth();
+                    }, 30000);
+                }
+            };
+
+            // Initialize dashboard when page loads
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    dashboard.init();
+                });
+            } else {
+                dashboard.init();
+            }
+
+        })();
+    </script>
+</body>
+</html>
